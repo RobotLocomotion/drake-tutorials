@@ -1,0 +1,10 @@
+# -*- mode: yaml; -*-
+# vi: set ft=yaml:
+
+directories:
+  .
+
+targets:
+  //...
+
+workspace_type: python

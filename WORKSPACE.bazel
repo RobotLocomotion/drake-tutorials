@@ -1,0 +1,4 @@
+# -*- mode: bazel; -*-
+# vi: set ft=bazel:
+
+workspace(name = "drake_tutorials")

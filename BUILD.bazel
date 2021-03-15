@@ -1,0 +1,7 @@
+# -*- mode: bazel; -*-
+# vi: set ft=bazel:
+
+exports_files(
+    ["LICENSE"],
+    visibility = ["//visibility:public"],
+)

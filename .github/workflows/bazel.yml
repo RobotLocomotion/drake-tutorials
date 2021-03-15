@@ -1,0 +1,76 @@
+# -*- mode: yaml; -*-
+# vi: set ft=yaml:
+
+---
+name: bazel
+
+on:  # yamllint disable-line rule:truthy
+  push:
+  pull_request:
+  schedule:
+    - cron: '0 12 * * *'
+
+jobs:
+  ubuntu-1804:
+    name: ubuntu 18.04
+    runs-on: ubuntu-latest
+    container: ubuntu:18.04
+    steps:
+      - name: setup
+        run: |
+          apt-get -qq update || (sleep 15; apt-get -qq update)
+          apt-get -qq -o Acquire::Retries=4 -o Dpkg::Use-Pty=0 --no-install-recommends install \
+            ca-certificates \
+            g++ \
+            git \
+            gnupg \
+            python \
+            wget
+          wget -qO- https://bazel.build/bazel-release.pub.gpg | gpg --dearmor \
+            > /etc/apt/trusted.gpg.d/bazel.gpg
+          echo 'deb [arch=amd64] https://storage.googleapis.com/bazel-apt stable jdk1.8' \
+            > /etc/apt/sources.list.d/bazel.list
+          apt-get -qq update || (sleep 15; apt-get -qq update)
+          apt-get -qq -o Acquire::Retries=4 -o Dpkg::Use-Pty=0 --no-install-recommends install \
+            bazel
+          rm -rf /var/lib/apt/lists/*
+        env:
+          DEBIAN_FRONTEND: noninteractive
+        shell: bash
+      - name: checkout
+        uses: actions/checkout@v2
+      - name: build
+        run: bazel build //...
+        shell: bash
+
+  ubuntu-2004:
+    name: ubuntu 20.04
+    runs-on: ubuntu-latest
+    container: ubuntu:20.04
+    steps:
+      - name: setup
+        run: |
+          apt-get -qq update || (sleep 15; apt-get -qq update)
+          apt-get -qq -o Acquire::Retries=4 -o Dpkg::Use-Pty=0 --no-install-recommends install \
+            ca-certificates \
+            g++ \
+            git \
+            gnupg \
+            python-is-python3 \
+            wget
+          wget -qO- https://bazel.build/bazel-release.pub.gpg | gpg --dearmor \
+            > /etc/apt/trusted.gpg.d/bazel.gpg
+          echo 'deb [arch=amd64] https://storage.googleapis.com/bazel-apt stable jdk1.8' \
+            > /etc/apt/sources.list.d/bazel.list
+          apt-get -qq update || (sleep 15; apt-get -qq update)
+          apt-get -qq -o Acquire::Retries=4 -o Dpkg::Use-Pty=0 --no-install-recommends install \
+            bazel
+          rm -rf /var/lib/apt/lists/*
+        env:
+          DEBIAN_FRONTEND: noninteractive
+        shell: bash
+      - name: checkout
+        uses: actions/checkout@v2
+      - name: build
+        run: bazel build //...
+        shell: bash
